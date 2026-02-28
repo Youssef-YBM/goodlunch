@@ -18,10 +18,11 @@
     <ul class="menu">
       <li><a href="#accueil">Accueil</a></li>
       <li><a href="#repas">Nos Repas</a></li>
+      <li><a href="#configurateur">Personnaliser</a></li>
       <li><a href="#comment">Comment ça marche</a></li>
       <li><a href="#contact">Contact</a></li>
       <li class="panier">
-        <a href="#panier-modal">🛒 <span id="compteur-panier" class="panier-compteur">0</span></a>
+        <a href="#" onclick="ouvrirPanier()">🛒 <span id="compteur-panier" class="panier-compteur">0</span></a>
       </li>
     </ul>
   </nav>
@@ -45,6 +46,138 @@
     <h2>Nos Repas</h2>
     <div class="conteneur-cartes" id="conteneur-cartes">
       <!-- Cartes générées en JS -->
+    </div>
+  </section>
+
+  <!-- Section Configurateur de Repas -->
+  <section id="configurateur" class="configurateur-repas">
+    <h2>Créez Votre Repas Personnalisé</h2>
+    <p>Choisissez vos ingrédients préférés pour composer un repas unique.</p>
+
+    <div class="configurateur-contenu">
+      <!-- Étape 1 : Base -->
+      <div class="etape">
+        <h3>1. Base</h3>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="base" value="Riz basmati" checked>
+            <div class="option-contenu">
+              <img src="images/riz.jpg" alt="Riz basmati">
+              <span>Riz basmati</span>
+            </div>
+          </label>
+          <label class="option">
+            <input type="radio" name="base" value="Quinoa">
+            <div class="option-contenu">
+              <img src="images/Quinoa.jpg" alt="Quinoa">
+              <span>Quinoa</span>
+            </div>
+          </label>
+          <label class="option">
+            <input type="radio" name="base" value="Pâtes complètes">
+            <div class="option-contenu">
+              <img src="images/Pates.jpg" alt="Pâtes complètes">
+              <span>Pâtes complètes</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Étape 2 : Protéine -->
+      <div class="etape">
+        <h3>2. Protéine</h3>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="proteine" value="Poulet grillé" checked>
+            <div class="option-contenu">
+              <img src="images/Poulet.jpg" alt="Poulet grillé">
+              <span>Poulet grillé</span>
+            </div>
+          </label>
+          <label class="option">
+            <input type="radio" name="proteine" value="Bœuf haché">
+            <div class="option-contenu">
+              <img src="images/Boeuf.jpg" alt="Bœuf haché">
+              <span>Bœuf haché</span>
+            </div>
+          </label>
+          <label class="option">
+            <input type="radio" name="proteine" value="Tofu">
+            <div class="option-contenu">
+              <img src="images/Tofu.jpg" alt="Tofu">
+              <span>Tofu</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Étape 3 : Accompagnements -->
+      <div class="etape">
+        <h3>3. Accompagnements</h3>
+        <div class="options">
+          <label class="option">
+            <input type="checkbox" name="accompagnement" value="Légumes grillés">
+            <div class="option-contenu">
+              <img src="images/Legumes.jpg" alt="Légumes grillés">
+              <span>Légumes grillés</span>
+            </div>
+          </label>
+          <label class="option">
+            <input type="checkbox" name="accompagnement" value="Salade verte">
+            <div class="option-contenu">
+              <img src="images/Salade-verte.jpg" alt="Salade verte">
+              <span>Salade verte</span>
+            </div>
+          </label>
+          <label class="option">
+            <input type="checkbox" name="accompagnement" value="Frites">
+            <div class="option-contenu">
+              <img src="images/Frites.jpg" alt="Frites">
+              <span>Frites</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Étape 4 : Sauce -->
+      <div class="etape">
+        <h3>4. Sauce</h3>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="sauce" value="Sauce yaourt" checked>
+            <div class="option-contenu">
+              <img src="images/Sauce-yaourt.jpg" alt="Sauce yaourt">
+              <span>Sauce yaourt</span>
+            </div>
+          </label>
+          <label class="option">
+            <input type="radio" name="sauce" value="Sauce piquante">
+            <div class="option-contenu">
+              <img src="images/Sauce-piquante.jpg" alt="Sauce piquante">
+              <span>Sauce piquante</span>
+            </div>
+          </label>
+          <label class="option">
+            <input type="radio" name="sauce" value="Sauce fromagère">
+            <div class="option-contenu">
+              <img src="images/Sauce-fromagère.jpg" alt="Sauce fromagère">
+              <span>Sauce fromagère</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Résumé et bouton d'ajout au panier -->
+      <div class="resume-configurateur">
+        <h3>Votre repas personnalisé :</h3>
+        <div id="resume-repas" class="resume-repas">
+          <p>Aucun ingrédient sélectionné.</p>
+        </div>
+        <div class="prix-configurateur">
+          <p>Prix : <span id="prix-total">35</span> MAD</p>
+        </div>
+        <button class="btn-ajouter-config" onclick="ajouterRepasConfig()">Ajouter au panier</button>
+      </div>
     </div>
   </section>
 
