@@ -48,10 +48,15 @@ function mettreAJourPanier() {
 
   const produitsUniques = {};
   panier.forEach(item => {
-    produitsUniques[item.id] = produitsUniques[item.id] ? {...item, quantite: produitsUniques[item.id].quantite + 1} : {...item, quantite: 1};
+    if (!item.type) { // Si c'est un produit standard
+      produitsUniques[item.id] = produitsUniques[item.id] ? {...item, quantite: produitsUniques[item.id].quantite + 1} : {...item, quantite: 1};
+    }
   });
 
-  listePanier.innerHTML = Object.values(produitsUniques).map(item => `
+  // Ajouter les repas personnalisés
+  const repasPersonnalises = panier.filter(item => item.type === "personnalise");
+
+  let listeHTML = Object.values(produitsUniques).map(item => `
     <div class="item-panier">
       <div>
         <h4>${item.nom} x${item.quantite}</h4>
@@ -61,6 +66,22 @@ function mettreAJourPanier() {
     </div>
   `).join("");
 
+  // Ajouter les repas personnalisés
+  repasPersonnalises.forEach(item => {
+    listeHTML += `
+      <div class="item-panier">
+        <div>
+          <h4>${item.nom}</h4>
+          <p>${item.description}</p>
+          <p>${item.prix} MAD</p>
+        </div>
+        <button onclick="supprimerRepasPersonnalise(${item.id})">❌</button>
+      </div>
+    `;
+  });
+
+  listePanier.innerHTML = listeHTML;
+
   const totalPrix = panier.reduce((acc, item) => acc + item.prix, 0);
   total.textContent = totalPrix;
 }
@@ -68,7 +89,15 @@ function mettreAJourPanier() {
 // Supprimer un produit du panier
 function supprimerDuPanier(id) {
   let panier = JSON.parse(localStorage.getItem("panier")) || [];
-  panier = panier.filter(item => item.id !== id);
+  panier = panier.filter(item => !(item.id === id && !item.type)); // Ne supprime que les produits standards
+  localStorage.setItem("panier", JSON.stringify(panier));
+  mettreAJourPanier();
+}
+
+// Supprimer un repas personnalisé du panier
+function supprimerRepasPersonnalise(id) {
+  let panier = JSON.parse(localStorage.getItem("panier")) || [];
+  panier = panier.filter(item => !(item.id === id && item.type === "personnalise"));
   localStorage.setItem("panier", JSON.stringify(panier));
   mettreAJourPanier();
 }
@@ -81,21 +110,32 @@ function confirmerCommande() {
     return;
   }
 
+  // Générer le message WhatsApp
+  let message = "Bonjour GOODLUNCH 👋\nJe souhaite confirmer ma commande :\n\n";
+
   const produitsUniques = {};
   panier.forEach(item => {
-    produitsUniques[item.id] = produitsUniques[item.id] ? {...item, quantite: produitsUniques[item.id].quantite + 1} : {...item, quantite: 1};
+    if (!item.type) { // Produits standards
+      produitsUniques[item.id] = produitsUniques[item.id] ? {...item, quantite: produitsUniques[item.id].quantite + 1} : {...item, quantite: 1};
+    }
   });
 
-  const message = encodeURIComponent(
-    `Bonjour GOODLUNCH \nJe souhaite confirmer ma commande :\n\n${
-      Object.values(produitsUniques).map(item => `${item.nom} x${item.quantite}`).join("\n")
-    }\nTotal : ${panier.reduce((acc, item) => acc + item.prix, 0)} MAD\nMerci.`
-  );
+  // Ajouter les produits standards
+  Object.values(produitsUniques).forEach(item => {
+    message += `${item.nom} x${item.quantite}\n`;
+  });
 
-  window.open(`https://wa.me/212660329165?text=${message}`, "_blank");
-  localStorage.removeItem("panier");
-  mettreAJourPanier();
-  afficherToast("Commande confirmée ! Redirection vers WhatsApp...");
+  // Ajouter les repas personnalisés
+  const repasPersonnalises = panier.filter(item => item.type === "personnalise");
+  repasPersonnalises.forEach(item => {
+    message += `${item.nom} (${item.description}) x1\n`;
+  });
+
+  const totalPrix = panier.reduce((acc, item) => acc + item.prix, 0);
+  message += `\nTotal : ${totalPrix} MAD\nMerci.`;
+
+  const messageEncode = encodeURIComponent(message);
+  window.open(`https://wa.me/212660329165?text=${messageEncode}`, "_blank");
 }
 
 // Afficher une notification toast
@@ -115,12 +155,71 @@ function fermerPanier() {
   document.getElementById("panier-modal").style.display = "none";
 }
 
+// Prix de base pour un repas personnalisé
+let prixBase = 35;
+
+// Mettre à jour le résumé du repas personnalisé
+function mettreAJourResume() {
+  const base = document.querySelector('input[name="base"]:checked')?.value || "Aucune";
+  const proteine = document.querySelector('input[name="proteine"]:checked')?.value || "Aucune";
+  const accompagnements = Array.from(document.querySelectorAll('input[name="accompagnement"]:checked')).map(el => el.value);
+  const sauce = document.querySelector('input[name="sauce"]:checked')?.value || "Aucune";
+
+  const resumeElement = document.getElementById("resume-repas");
+  const prixElement = document.getElementById("prix-total");
+
+  // Calculer le prix total
+  let prixTotal = prixBase;
+  if (accompagnements.length > 0) prixTotal += accompagnements.length * 5;
+
+  // Mettre à jour le résumé
+  let resumeHTML = `
+    <p><strong>Base :</strong> ${base}</p>
+    <p><strong>Protéine :</strong> ${proteine}</p>
+  `;
+
+  if (accompagnements.length > 0) {
+    resumeHTML += `<p><strong>Accompagnements :</strong> ${accompagnements.join(", ")}</p>`;
+  }
+
+  resumeHTML += `<p><strong>Sauce :</strong> ${sauce}</p>`;
+
+  resumeElement.innerHTML = resumeHTML;
+  prixElement.textContent = prixTotal;
+}
+
+// Ajouter un événement pour mettre à jour le résumé quand un choix change
+document.querySelectorAll('input[name="base"], input[name="proteine"], input[name="accompagnement"], input[name="sauce"]').forEach(input => {
+  input.addEventListener("change", mettreAJourResume);
+});
+
+// Ajouter le repas personnalisé au panier
+function ajouterRepasConfig() {
+  const base = document.querySelector('input[name="base"]:checked')?.value || "Aucune";
+  const proteine = document.querySelector('input[name="proteine"]:checked')?.value || "Aucune";
+  const accompagnements = Array.from(document.querySelectorAll('input[name="accompagnement"]:checked')).map(el => el.value);
+  const sauce = document.querySelector('input[name="sauce"]:checked')?.value || "Aucune";
+  const prixTotal = document.getElementById("prix-total").textContent;
+
+  const repasPersonnalise = {
+    id: Date.now(),
+    nom: "Repas Personnalisé",
+    description: `Base: ${base}, Protéine: ${proteine}, Accompagnements: ${accompagnements.join(", ") || "Aucun"}, Sauce: ${sauce}`,
+    prix: parseInt(prixTotal),
+    type: "personnalise"
+  };
+
+  // Ajouter au panier
+  let panier = JSON.parse(localStorage.getItem("panier")) || [];
+  panier.push(repasPersonnalise);
+  localStorage.setItem("panier", JSON.stringify(panier));
+  mettreAJourPanier();
+  afficherToast("Repas personnalisé ajouté au panier !");
+}
+
 // Initialisation
 document.addEventListener("DOMContentLoaded", () => {
   genererCartes();
   mettreAJourPanier();
-  document.querySelector(".panier").addEventListener("click", (e) => {
-    e.preventDefault();
-    ouvrirPanier();
-  });
+  mettreAJourResume();
 });
