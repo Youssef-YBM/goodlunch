@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GOODLUNCH - Commandez vos repas en ligne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="images/logo-goodlunch.png" alt="GOODLUNCH - since 2025" class="logo-img">
+    </div>
+    <ul class="menu">
+      <li><a href="#accueil">Accueil</a></li>
+      <li><a href="#repas">Nos Repas</a></li>
+      <li><a href="#comment">Comment ça marche</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li class="panier">
+        <a href="#panier-modal">🛒 <span id="compteur-panier" class="panier-compteur">0</span></a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="accueil" class="hero">
+    <div class="hero-contenu">
+      <h1>Choisissez votre repas préféré en quelques clics avec <span class="good">GOOD</span><span class="lunch">LUNCH</span></h1>
+      <p>Commandez facilement via notre site web ou application mobile et confirmez en un instant sur WhatsApp.</p>
+      <button class="btn-commander" onclick="document.getElementById('repas').scrollIntoView({ behavior: 'smooth' })">
+        Commander maintenant
+      </button>
+    </div>
+    <div class="hero-image">
+      <img src="images/repas-modern.png" alt="Repas moderne et sain">
+    </div>
+  </section>
+
+  <!-- Section Nos Repas -->
+  <section id="repas" class="nos-repas">
+    <h2>Nos Repas</h2>
+    <div class="conteneur-cartes" id="conteneur-cartes">
+      <!-- Cartes générées en JS -->
+    </div>
+  </section>
+
+  <!-- Section Comment ça marche -->
+  <section id="comment" class="comment">
+    <h2>Comment ça marche</h2>
+    <div class="etapes">
+      <div class="etape">
+        <div class="icone">🍽️</div>
+        <h3>Choisissez votre repas</h3>
+        <p>Parcourez notre menu varié et sélectionnez vos plats préférés.</p>
+      </div>
+      <div class="etape">
+        <div class="icone">🛒</div>
+        <h3>Ajoutez au panier</h3>
+        <p>Ajoutez vos plats au panier et ajustez les quantités.</p>
+      </div>
+      <div class="etape">
+        <div class="icone">📱</div>
+        <h3>Confirmez via WhatsApp</h3>
+        <p>Validez votre commande et recevez une confirmation instantanée.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panier Modal -->
+  <div id="panier-modal" class="panier-modal">
+    <div class="panier-contenu">
+      <span class="fermer" onclick="fermerPanier()">&times;</span>
+      <h2>Votre Panier</h2>
+      <div id="liste-panier" class="liste-panier">
+        <!-- Contenu généré en JS -->
+      </div>
+      <div class="total">
+        <p>Total : <span id="total-panier">0</span> MAD</p>
+      </div>
+      <button id="btn-confirmer" class="btn-confirmer" onclick="confirmerCommande()">
+        Confirmer la commande
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-contenu">
+      <div class="footer-logo">
+        <img src="images/logo-goodlunch.png" alt="GOODLUNCH" class="logo-img">
+      </div>
+      <div class="footer-infos">
+        <p> WhatsApp : +212660-329165</p>
+        <div class="reseaux">
+          <a href="#">Instagram : good_lunch__</a>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>&copy; 2025 GOODLUNCH. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
