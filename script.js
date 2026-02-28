@@ -111,7 +111,7 @@ function confirmerCommande() {
   }
 
   // Générer le message WhatsApp
-  let message = "Bonjour GOODLUNCH 👋\nJe souhaite confirmer ma commande :\n\n";
+  let message = "Bonjour GOODLUNCH \nJe souhaite confirmer ma commande :\n\n";
 
   const produitsUniques = {};
   panier.forEach(item => {
@@ -160,32 +160,61 @@ let prixBase = 35;
 
 // Mettre à jour le résumé du repas personnalisé
 function mettreAJourResume() {
-  const base = document.querySelector('input[name="base"]:checked')?.value || "Aucune";
-  const proteine = document.querySelector('input[name="proteine"]:checked')?.value || "Aucune";
-  const accompagnements = Array.from(document.querySelectorAll('input[name="accompagnement"]:checked')).map(el => el.value);
-  const sauce = document.querySelector('input[name="sauce"]:checked')?.value || "Aucune";
+// Récupérer uniquement les éléments sélectionnés
+const base = Array.from(document.querySelectorAll('input[name="base"]:checked'))
+                  .map(el => el.value);
 
-  const resumeElement = document.getElementById("resume-repas");
-  const prixElement = document.getElementById("prix-total");
+const proteine = Array.from(document.querySelectorAll('input[name="proteine"]:checked'))
+                      .map(el => el.value);
 
-  // Calculer le prix total
-  let prixTotal = prixBase;
-  if (accompagnements.length > 0) prixTotal += accompagnements.length * 5;
+const accompagnements = Array.from(document.querySelectorAll('input[name="accompagnement"]:checked'))
+                              .map(el => el.value);
 
-  // Mettre à jour le résumé
-  let resumeHTML = `
-    <p><strong>Base :</strong> ${base}</p>
-    <p><strong>Protéine :</strong> ${proteine}</p>
-  `;
+const sauce = Array.from(document.querySelectorAll('input[name="sauce"]:checked'))
+                    .map(el => el.value);
 
-  if (accompagnements.length > 0) {
-    resumeHTML += `<p><strong>Accompagnements :</strong> ${accompagnements.join(", ")}</p>`;
-  }
+const resumeElement = document.getElementById("resume-repas");
+const prixElement = document.getElementById("prix-total");
 
-  resumeHTML += `<p><strong>Sauce :</strong> ${sauce}</p>`;
+// Calcul prix
+let prixTotal = prixBase;
+if (accompagnements.length > 0) {
+  prixTotal += accompagnements.length * 5;
+}
 
-  resumeElement.innerHTML = resumeHTML;
-  prixElement.textContent = prixTotal;
+// Si rien sélectionné
+if (
+  base.length === 0 &&
+  proteine.length === 0 &&
+  accompagnements.length === 0 &&
+  sauce.length === 0
+) {
+  resumeElement.innerHTML = "<p>Aucun ingrédient sélectionné.</p>";
+  prixElement.textContent = prixBase;
+  return;
+}
+
+// Construire le résumé dynamiquement
+let resumeHTML = "";
+
+if (base.length > 0) {
+  resumeHTML += `<p><strong>Base :</strong> ${base.join(", ")}</p>`;
+}
+
+if (proteine.length > 0) {
+  resumeHTML += `<p><strong>Protéine :</strong> ${proteine.join(", ")}</p>`;
+}
+
+if (accompagnements.length > 0) {
+  resumeHTML += `<p><strong>Accompagnements :</strong> ${accompagnements.join(", ")}</p>`;
+}
+
+if (sauce.length > 0) {
+  resumeHTML += `<p><strong>Sauce :</strong> ${sauce.join(", ")}</p>`;
+}
+
+resumeElement.innerHTML = resumeHTML;
+prixElement.textContent = prixTotal;
 }
 
 // Ajouter un événement pour mettre à jour le résumé quand un choix change
